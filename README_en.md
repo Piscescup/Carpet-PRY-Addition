@@ -65,6 +65,8 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 
 - `fixXaeroLib`: fixes fake player data loss when Xaero's maps are used with LuckPerms
 - `fixBlueMap`: fixes fake players not triggering Fabric API connection events, allowing BlueMap and similar mods to track bots properly
+- `fixEndCrystalSync`: fixes client-side position desync when end crystals are pushed by pistons
+- `fixStandingOnAir`: fixes the 26.3 "standing on air" misjudgment — the resync ran before the movement was applied, force-sending wrong blocks and spamming the log (backport of the official 26.4 Snapshot 1 fix, 26.3 only)
 
 ### Ported Rules
 
@@ -95,6 +97,7 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 - `peacefulPlayers`: per-player `/pvp` toggles, `@a` as a server-wide switch
 - `patPatPlayers`: pat other players' heads cat-petting style — the target bobs down and up with the rhythm with hearts above their head, while the patted player sees a heart before their eyes and hears a soft sound coming from the patter's direction; works with any item in hand and never alters vanilla interactions (`true` = pat freely / `sneak` = only while sneaking; pure server-side, similar to PatPat)
 - `whoCalledMe`: when a chat message contains a player's name (substring with longest-name-wins, glued letters/digits count), the mentioned player gets three notification dings (sound selectable, `false` to mute) and a title showing the message text; player names appearing in chat are highlighted (default aqua, 16 colors + rainbow gradient available, `false` keeps colors untouched; mentioning yourself works too, fake players excluded)
+- `clickThrough`: right-click wall signs/item frames/paintings to open containers mounted directly behind them (sneak keeps vanilla interaction)
 
 ### Survival Features
 
@@ -103,6 +106,7 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 - `playerHat`: `/hat` to wear items on head, Totem of Undying in head slot triggers death protection
 - `betterSnowball`: snowballs deal knockback and damage to players
 - `invisibleInTallGrass`: auto-invisibility when head is inside tall grass
+- `moreEndCrystalTypes`: allows placing end crystals on crying obsidian (`invulnerable` places an invulnerable one)
 
 
 ## Credits
