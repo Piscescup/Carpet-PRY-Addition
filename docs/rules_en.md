@@ -2,7 +2,7 @@
 
 > Mod ID: `carpet-pry-addition` | Version: `1.2.0`
 >
-> Total: **33 rules** (`whoCalledMeSound` / `whoCalledMeHighlight` are documented inline as companion rules in the whoCalledMe section)
+> Total: **34 rules** (`whoCalledMeSound` / `whoCalledMeHighlight` are documented inline as companion rules in the whoCalledMe section)
 >
 > **Tip: Use `Ctrl+F` to quickly find the rule you want**
 
@@ -22,6 +22,7 @@
   - [fixXaeroLib - XaeroLib Compatibility Patch](#fixxaerolib---xaerolib-compatibility-patch)
   - [fixBlueMap - BlueMap Compatibility Patch](#fixbluemap---bluemap-compatibility-patch)
   - [fixEndCrystalSync - Fix End Crystal Sync](#fixendcrystalsync---fix-end-crystal-sync)
+  - [fixStandingOnAir - Fix Standing On Air](#fixstandingonair---fix-standing-on-air)
 - [Ported Features (PORTING)](#ported-features-porting)
   - [sleepingDuringTheDay - Daydreaming](#sleepingduringtheday---daydreaming)
   - [unicodeArgumentsSupport - Unicode Argument Support](#unicodeargumentssupport---unicode-argument-support)
@@ -257,6 +258,28 @@ Fixes the client-side position desync when an end crystal (including invulnerabl
 | **Categories** | `PRIMARYUAN`, `BUGFIX` |
 
 **How it works**: vanilla registers the end crystal with `updateInterval=Integer.MAX_VALUE`, so the server position-sync branch never runs for crystals (except the initial spawn packet); during piston pushes, client and server simulate independently in `PistonMovingBlockEntity` with no self-healing path once they diverge. When enabled, the server zeroes `ServerEntity.tickCount` whenever a tracked crystal's position changes, making the current sync run the vanilla position-sync branch — packet construction and broadcasting are entirely vanilla, and clients realign within 1 tick. Since 26.2 the `tickCount` increment moved before the gate, so the preprocessor sets -1 per version.
+
+---
+
+### fixStandingOnAir - Fix Standing On Air
+
+Fixes 26.3 servers repeatedly logging `Player <x> standing on air - force-sending blocks below` and force-sending the wrong blocks below (backport of the official 26.4 Snapshot 1 fix). Only affects 26.3.
+
+| Property | Value |
+|----------|-------|
+| **Rule Name** | `fixStandingOnAir` |
+| **Description** | Fixes 26.3 servers repeatedly logging 'Player &lt;x&gt; standing on air' and force-sending the wrong blocks below. Cause: vanilla ran the standing-on-air resync before applying the movement, judging with the pre-move bounding box. When enabled, the recovery call is deferred until after player.move — matching the official 26.4 Snapshot 1 fix — with the guard and the 200-tick cooldown untouched. Only affects 26.3 |
+| **Type** | `boolean` |
+| **Default Value** | `false` |
+| **Suggested Options** | `false`, `true` |
+| **Categories** | `PRIMARYUAN`, `BUGFIX` |
+
+**How it works**: since 26.3 the server carries a ghost-block safeguard in move-packet handling (`handlePlayerPositionChange`) — when the client claims to be on ground but the server's last move registered no downward collision, it re-sends the blocks just below the bounding box corners. The call originally ran *before* `player.move`, judging with the pre-move bounding box: jumping onto a block misreads as "standing on air", triggering a wrong resend plus the 200-tick cooldown (the source of the every-10-seconds log line), which then suppresses legitimate resends. When enabled, the recovery call is deferred until after `player.move` — the vanilla guard is kept as-is and the recovery method is the vanilla one, instruction-equivalent to the official 26.4 Snapshot 1 fix (verified against decompiled 26.3 / 26.4-snapshot-1 jars plus javap). With the rule off, behavior is identical to vanilla 26.3. The mechanism only exists in 26.3 (absent from 26.1.2/26.2), so the mixin is registered for 26.3 only.
+
+#### Related Issues
+
+- [MC-311474](https://bugs.mojang.com/browse/MC/issues/MC-311474) — standing on air log false positives
+- [MC-311727](https://mojira.dev/MC-311727) — root cause (check runs before movement), fixed in 26.4 Snapshot 1
 
 ---
 

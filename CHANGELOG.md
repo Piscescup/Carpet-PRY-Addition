@@ -2,6 +2,11 @@
 
 All notable changes to **Carpet-PRY-Addition** are documented in this file.
 
+## 未发布
+
+### 修复
+- **站空误判（`fixStandingOnAir`，仅 26.3）**：26.3 服务器反复刷 `Player <x> standing on air - force-sending blocks below` 日志并误发脚下方块。根因（MC-311727）：26.3 snapshot 10 引入的幽灵方块重发机制把"站空"检测与恢复调用放在 `player.move` 之前，用移动前的旧碰撞箱判定——跳上方块时误判站空，发错方块并写 200 tick 冷却（日志每 10 秒一条的节奏），冷却期内真正需要的补发反被压制。开启规则后把恢复调用延迟到 move 之后执行：原版守卫判定与冷却逻辑原样保留、恢复方法为原版本体，与 26.4 Snapshot 1 官方修法等价（26.3 / 26.4-snapshot-1 官方 jar 反编译 + javap 双口径核实）；规则关闭时与原版 26.3 行为一致。机制仅 26.3 存在（26.1.2/26.2 javap 核实无此代码），mixin 仅登记 26.3
+
 ## [1.3.0] - 2026-10-07
 
 ### 功能

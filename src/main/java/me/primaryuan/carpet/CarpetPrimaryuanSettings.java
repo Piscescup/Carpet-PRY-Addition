@@ -174,6 +174,13 @@ public class CarpetPrimaryuanSettings {
     )
     public static boolean fixEndCrystalSync = false;
 
+    // 修复 26.3"站在空中"误判：恢复调用跑在移动前，旧碰撞箱导致误发下方方块并刷日志
+    // （回移植 26.4 Snapshot 1 官方修复，仅 26.3 生效）
+    @Rule(
+            categories = {PRIMARYUAN, BUGFIX}
+    )
+    public static boolean fixStandingOnAir = false;
+
     // 摸摸头：右键其他玩家的头部摸摸头（爱心粒子+轻响+被摸提示），纯服务端实现；
     // 不要求空手、恒不消费交互（火后不管，原版行为不受影响）
     @Rule(

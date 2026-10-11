@@ -2,7 +2,7 @@
 
 > Mod ID: `carpet-pry-addition` | 版本: `1.2.0`
 >
-> 共 **33 条**规则（`whoCalledMeSound` / `whoCalledMeHighlight` 作为配套子规则内联在 whoCalledMe 节）
+> 共 **34 条**规则（`whoCalledMeSound` / `whoCalledMeHighlight` 作为配套子规则内联在 whoCalledMe 节）
 >
 > **提示：可以使用 `Ctrl+F` 快速查找自己想要的规则**
 
@@ -22,6 +22,7 @@
   - [fixXaeroLib - XaeroLib兼容性修复补丁](#fixxaerolib---xaerolib兼容性修复补丁)
   - [fixBlueMap - BlueMap兼容性修复补丁](#fixbluemap---bluemap兼容性修复补丁)
   - [fixEndCrystalSync - 修复末地水晶位置不同步](#fixendcrystalsync---修复末地水晶位置不同步)
+  - [fixStandingOnAir - 修复站空误判](#fixstandingonair---修复站空误判)
 - [移植功能 (PORTING)](#移植功能-porting)
   - [sleepingDuringTheDay - 白日做梦](#sleepingduringtheday---白日做梦)
   - [unicodeArgumentsSupport - Unicode 参数支持](#unicodeargumentssupport---unicode-参数支持)
@@ -257,6 +258,26 @@
 | **分类** | `PRIMARYUAN`, `BUGFIX` |
 
 **工作原理**：原版把末地水晶的跟踪间隔注册为 `updateInterval=Integer.MAX_VALUE`，服务端位置同步分支对水晶永不触发（除出生包外）；活塞推动时客户端与服务端各自在 `PistonMovingBlockEntity` 里独立模拟，一旦分歧没有任何自愈途径。开启后服务端在水晶位置变化时把 `ServerEntity.tickCount` 归零，令本次同步命中原版位置同步分支——数据包构造与广播完全复用原版，客户端 1 tick 内对齐。26.2 起 `tickCount` 自增移至门控之前，按版本预处理置 -1。
+
+---
+
+### fixStandingOnAir - 修复站空误判
+
+修复 26.3 服务端反复刷 `Player <x> standing on air - force-sending blocks below` 日志并误发脚下方块的问题（回移植 26.4 Snapshot 1 官方修复）。仅 26.3 生效。
+
+| 属性 | 值 |
+|------|-----|
+| **规则名** | `fixStandingOnAir` |
+| **描述** | 修复 26.3 服务端反复刷 'Player &lt;x&gt; standing on air' 日志并误发脚下方块的问题。原因：原版把站空检测与恢复调用放在移动应用之前，用移动前的旧碰撞箱判定。开启后恢复调用延迟到移动之后执行，与 26.4 Snapshot 1 官方修复一致，守卫判定与 200 tick 冷却原样保留。仅 26.3 生效 |
+| **类型** | `boolean` |
+| **默认值** | `false` |
+| **参考选项** | `false`, `true` |
+| **分类** | `PRIMARYUAN`, `BUGFIX` |
+
+**工作原理**：26.3 起服务端在移动包处理（`handlePlayerPositionChange`）中带有一道幽灵方块防线——客户端声称在地面而服务端上次移动未发生向下碰撞时，把碰撞箱四角下方的方块重发给客户端。该调用原本排在 `player.move` 之前，用移动前的旧碰撞箱判定：跳上方块时被误判为站空，误发方块并写 200 tick 冷却（日志每 10 秒一条的来源），冷却期内真正需要的补发反被压制。开启后把恢复调用延迟到 `player.move` 之后执行——守卫判定原样保留、恢复方法为原版本体，与 26.4 Snapshot 1 官方修法逐指令等价（26.3 / 26.4-snapshot-1 双版本反编译 + javap 核实）；规则关闭时与原版 26.3 行为一致。该机制仅 26.3 存在（26.1.2/26.2 无此代码），mixin 仅登记 26.3。
+
+- [MC-311474](https://bugs.mojang.com/browse/MC/issues/MC-311474) — standing on air 日志误报刷屏
+- [MC-311727](https://mojira.dev/MC-311727) — 检测先于移动的根因，官方修于 26.4 Snapshot 1
 
 ---
 
