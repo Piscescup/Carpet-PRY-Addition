@@ -54,7 +54,7 @@
   "carpet.rule.fixEndCrystalSync.name": "修复末地水晶位置不同步",
   "carpet.rule.fixEndCrystalSync.desc": "修复活塞推动末地水晶后客户端与服务端位置不同步的问题。原因：原版末地水晶不做周期性位置同步，活塞推动由客户端和服务端各自独立模拟，模拟结果一旦分歧永不自愈（重进/重启后才恢复）。开启后服务端检测到末地水晶位置变化即强制执行原版位置同步，客户端 1 tick 内自动对齐，重进服务器时的出生时序竞争同样会被纠正",
   "carpet.rule.fixStandingOnAir.name": "修复站空误判",
-  "carpet.rule.fixStandingOnAir.desc": "修复 26.3 服务端反复刷 'Player <x> standing on air' 日志并误发脚下方块的问题。原因：原版把站空检测与恢复调用放在移动应用之前，用移动前的旧碰撞箱判定。开启后恢复调用延迟到移动之后执行，与 26.4 Snapshot 1 官方修复一致，守卫判定与 200 tick 冷却原样保留。仅 26.3 生效",
+  "carpet.rule.fixStandingOnAir.desc": "修复 26.3 站空恢复时误发脚下方块的问题，并取消站空 INFO 日志。仅 26.3 生效。",
   "carpet.rule.patPatPlayers.name": "摸摸头",
   "carpet.rule.patPatPlayers.desc": "右键点击其他玩家的头部摸摸头：对方头顶与眼前冒爱心，轻响从发起者方向传来（转头即知谁在摸你）；不要求空手、不改变任何原版交互。true=随手可摸；sneak=按下潜行键右键才摸。纯服务端实现，客户端无需安装；被摸者会随抚摸节奏往复蹲起（按住潜行则保持蹲）",
   "carpet.rule.whoCalledMe.name": "谁在叫我",

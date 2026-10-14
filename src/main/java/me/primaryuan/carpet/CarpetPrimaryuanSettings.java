@@ -174,7 +174,7 @@ public class CarpetPrimaryuanSettings {
     )
     public static boolean fixEndCrystalSync = false;
 
-    // 修复 26.3"站在空中"误判：恢复调用跑在移动前，旧碰撞箱导致误发下方方块并刷日志
+    // 修复 26.3 方块重发时序，并取消站空 INFO 日志
     // （回移植 26.4 Snapshot 1 官方修复，仅 26.3 生效）
     @Rule(
             categories = {PRIMARYUAN, BUGFIX}

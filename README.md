@@ -67,7 +67,7 @@
 - `fixXaeroLib`：修复 Xaero 地图 + LuckPerms 导致假人数据丢失的问题
 - `fixBlueMap`：修复假人不触发 Fabric API 连接事件导致 BlueMap 等模组追踪异常
 - `fixEndCrystalSync`：修复活塞推动末地水晶后客户端位置不同步的问题
-- `fixStandingOnAir`：修复 26.3"站在空中"误判——站空检测跑在移动应用前，导致误发脚下方块并刷日志（回移植 26.4 Snapshot 1 官方修复，仅 26.3 生效）
+- `fixStandingOnAir`：修复 26.3 站空恢复时误发脚下方块，并取消站空 INFO 日志
 
 ### 移植规则
 

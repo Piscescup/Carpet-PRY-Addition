@@ -25,7 +25,7 @@ Related upstream issues:
 
 ### Standing On Air Misjudgment Fix (`fixStandingOnAir`)
 
-Fixes 26.3 servers repeatedly logging `Player <x> standing on air - force-sending blocks below` and force-sending the wrong blocks below — the vanilla resync ran before applying the movement, judging with the pre-move bounding box. Backport of the official 26.4 Snapshot 1 fix; only affects 26.3.
+Moves support-block resends after player movement, matching the official 26.4 Snapshot 1 fix, and additionally suppresses the standing-on-air INFO log. Resends and the 200-tick cooldown remain active. Only affects 26.3.
 
 Related upstream issues:
 

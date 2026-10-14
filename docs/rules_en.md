@@ -263,18 +263,18 @@ Fixes the client-side position desync when an end crystal (including invulnerabl
 
 ### fixStandingOnAir - Fix Standing On Air
 
-Fixes 26.3 servers repeatedly logging `Player <x> standing on air - force-sending blocks below` and force-sending the wrong blocks below (backport of the official 26.4 Snapshot 1 fix). Only affects 26.3.
+Fixes incorrect support-block resends and suppresses the `Player <x> standing on air - force-sending blocks below` INFO log. Only affects 26.3.
 
 | Property | Value |
 |----------|-------|
 | **Rule Name** | `fixStandingOnAir` |
-| **Description** | Fixes 26.3 servers repeatedly logging 'Player &lt;x&gt; standing on air' and force-sending the wrong blocks below. Cause: vanilla ran the standing-on-air resync before applying the movement, judging with the pre-move bounding box. When enabled, the recovery call is deferred until after player.move — matching the official 26.4 Snapshot 1 fix — with the guard and the 200-tick cooldown untouched. Only affects 26.3 |
+| **Description** | Fixes incorrect support-block resends and suppresses the standing-on-air INFO log. Only affects 26.3. |
 | **Type** | `boolean` |
 | **Default Value** | `false` |
 | **Suggested Options** | `false`, `true` |
 | **Categories** | `PRIMARYUAN`, `BUGFIX` |
 
-**How it works**: since 26.3 the server carries a ghost-block safeguard in move-packet handling (`handlePlayerPositionChange`) — when the client claims to be on ground but the server's last move registered no downward collision, it re-sends the blocks just below the bounding box corners. The call originally ran *before* `player.move`, judging with the pre-move bounding box: jumping onto a block misreads as "standing on air", triggering a wrong resend plus the 200-tick cooldown (the source of the every-10-seconds log line), which then suppresses legitimate resends. When enabled, the recovery call is deferred until after `player.move` — the vanilla guard is kept as-is and the recovery method is the vanilla one, instruction-equivalent to the official 26.4 Snapshot 1 fix (verified against decompiled 26.3 / 26.4-snapshot-1 jars plus javap). With the rule off, behavior is identical to vanilla 26.3. The mechanism only exists in 26.3 (absent from 26.1.2/26.2), so the mixin is registered for 26.3 only.
+**How it works**: vanilla triggers support-block resends when the client reports being on ground and the server saved `verticalCollisionBelow` as false before movement. In 26.3 the resend runs before `player.move`, potentially using the old bounding box. The rule defers it until after movement, matching the official 26.4 Snapshot 1 timing fix. The official fix retains the guard, 200-tick cooldown and INFO log; the log precedes reading the bounding box and does not establish that support blocks are absent. PRY additionally skips this INFO call while preserving resends and the cooldown. Disabling the rule restores vanilla behavior. This Mixin loads only on 26.3.
 
 #### Related Issues
 

@@ -66,7 +66,7 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 - `fixXaeroLib`: fixes fake player data loss when Xaero's maps are used with LuckPerms
 - `fixBlueMap`: fixes fake players not triggering Fabric API connection events, allowing BlueMap and similar mods to track bots properly
 - `fixEndCrystalSync`: fixes client-side position desync when end crystals are pushed by pistons
-- `fixStandingOnAir`: fixes the 26.3 "standing on air" misjudgment — the resync ran before the movement was applied, force-sending wrong blocks and spamming the log (backport of the official 26.4 Snapshot 1 fix, 26.3 only)
+- `fixStandingOnAir`: fixes incorrect support-block resends and suppresses the standing-on-air INFO log (26.3 only)
 
 ### Ported Rules
 
