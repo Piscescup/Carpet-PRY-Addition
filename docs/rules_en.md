@@ -2,7 +2,7 @@
 
 > Mod ID: `carpet-pry-addition` | Version: `1.2.0`
 >
-> Total: **34 rules** (`whoCalledMeSound` / `whoCalledMeHighlight` are documented inline as companion rules in the whoCalledMe section)
+> Total: **35 rules** (`whoCalledMeSound` / `whoCalledMeHighlight` are documented inline as companion rules in the whoCalledMe section)
 >
 > **Tip: Use `Ctrl+F` to quickly find the rule you want**
 
@@ -37,6 +37,7 @@
   - [whoCalledMe - Who Called Me](#whocalledme---who-called-me)
 - [Survival Features](#survival-features)
   - [playerHat - Player Hat](#playerhat---player-hat)
+  - [playerHeadSkin - Player Head Skin](#playerheadskin---player-head-skin)
   - [betterSnowball - Better Snowball](#bettersnowball---better-snowball)
   - [invisibleInTallGrass - Invisibility Grass](#invisibleintallgrass---invisibility-grass)
   - [moreEndCrystalTypes - More End Crystal Types](#moreendcrystaltypes---more-end-crystal-types)
@@ -461,6 +462,25 @@ Allows players to wear items on their head and adds the /hat command. When a Tot
 | **Default Value** | `false` |
 | **Suggested Options** | `false`, `true` |
 | **Categories** | `PRIMARYUAN`, `SURVIVAL`, `COMMAND` |
+
+---
+
+### playerHeadSkin - Player Head Skin
+
+Real players and Carpet fake players use a player head's full skin while wearing it in the head slot. Swapping heads updates the skin; removing the head, equipping another item, or disabling the rule restores the previous skin, including a configured fake player skin. Also applies when enabling the rule, joining, or respawning with a head equipped.
+
+| Property | Value |
+|----------|-------|
+| **Rule Name** | `playerHeadSkin` |
+| **Description** | Real and fake players use a worn player head's full skin; removing it or disabling the rule restores their original skin |
+| **Type** | `boolean` |
+| **Default Value** | `false` |
+| **Suggested Options** | `false`, `true` |
+| **Categories** | `PRIMARYUAN`, `SURVIVAL`, `FEATURE` |
+
+- Uses the head's embedded skin first; name-only or UUID-only heads are resolved asynchronously through vanilla services. Keeps the original skin while waiting or on failure. Mob heads and player heads without a valid skin source do not change the skin.
+- Changes only the skin: name, UUID, and game state stay intact, and the equipped head remains visible. Server-side; no skin mod required. Works independently of `playerHat`: equipping a player head normally is enough.
+- Refreshing a real player's own view may briefly show a loading screen. With an external container open or an item held by the cursor, self-refresh waits until the container is closed and the item is put back; other players see the change immediately.
 
 ---
 

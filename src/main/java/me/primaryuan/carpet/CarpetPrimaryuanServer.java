@@ -19,6 +19,7 @@ import me.primaryuan.carpet.handler.clickThrough.ClickThroughHandler;
 import me.primaryuan.carpet.handler.entitiesRidingPlayers.EntitiesRidingPlayersHandler;
 import me.primaryuan.carpet.handler.patPatPlayers.PatPatPlayersHandler;
 import me.primaryuan.carpet.handler.peacefulPlayers.PvpManager;
+import me.primaryuan.carpet.handler.playerHeadSkin.PlayerHeadSkinHandler;
 import me.primaryuan.carpet.handler.textAnimation.TextAnimationHandler;
 import me.primaryuan.carpet.handler.whoCalledMe.WhoCalledMeHandler;
 import me.primaryuan.carpet.settings.CarpetRuleRegistrar;
@@ -112,6 +113,9 @@ public class CarpetPrimaryuanServer implements CarpetExtension {
         // 假人脑子（brain）：初始化会话周期扫描与停服清理
         // （跨维度不在此处重挂——由 MobFields 检测维度变化重建寻路器并作废旧路径）
         BrainManager.init();
+
+        // 玩家头部皮肤：头颅变化检测、皮肤还原与异步会话清理
+        PlayerHeadSkinHandler.init();
 
         // require=0 注入点自检：规则开启但注入被静默跳过时以 error 点名（MixinSanityCheck）
         MixinSanityCheck.init();

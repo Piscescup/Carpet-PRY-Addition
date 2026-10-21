@@ -11,7 +11,7 @@
 
 ## 简介
 
-**Carpet-PRY-Addition** 是一个基于 [Fabric Carpet](https://github.com/gnembon/fabric-carpet) 的服务端扩展模组，主要为 PRY 服务器（Primaryuan Server）开发，在客户端安装时能增加使用体验。新增 **34 条**可配置 Carpet 规则和 **9 个**命令，涵盖假人管理增强、玩家缩放、服务器管理、模组兼容性修复、功能移植、玩家交互和生存特性扩展。
+**Carpet-PRY-Addition** 是一个基于 [Fabric Carpet](https://github.com/gnembon/fabric-carpet) 的服务端扩展模组，主要为 PRY 服务器（Primaryuan Server）开发，在客户端安装时能增加使用体验。新增 **35 条**可配置 Carpet 规则和 **9 个**命令，涵盖假人管理增强、玩家缩放、服务器管理、模组兼容性修复、功能移植、玩家交互和生存特性扩展。
 
 除 `ridingPlayersClientInteract` 客户端规则默认开启外，其余规则默认关闭，按需启用。
 
@@ -104,6 +104,7 @@
 
 - `sleepingDuringTheDay`：白天睡觉，睡醒切换至夜晚
 - `playerHat`：`/hat` 将物品戴在头上，头部不死图腾可触发死亡保护
+- `playerHeadSkin`：真人与假人戴玩家头颅切换全身皮肤，摘下恢复原皮肤，纯服务端
 - `betterSnowball`：雪球对玩家造成击退与伤害
 - `invisibleInTallGrass`：头部位于高草丛时自动隐身
 - `moreEndCrystalTypes`：允许把末地水晶放在哭泣的黑曜石上（`invulnerable` 放出无敌水晶）

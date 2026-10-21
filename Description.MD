@@ -1,4 +1,4 @@
-Carpet PRY Addition is a server-side Fabric extension for the [fabric-carpet](https://github.com/gnembon/fabric-carpet) mod, developed for the **Primaryuan Server**. It adds 34 configurable Carpet rules and 9 new commands (plus `/player` extensions) covering bug fixes, fake player enhancements, player interaction, and survival gameplay expansion.
+Carpet PRY Addition is a server-side Fabric extension for the [fabric-carpet](https://github.com/gnembon/fabric-carpet) mod, developed for the **Primaryuan Server**. It adds 35 configurable Carpet rules and 9 new commands (plus `/player` extensions) covering bug fixes, fake player enhancements, player interaction, and survival gameplay expansion.
 
 ---
 
@@ -86,6 +86,10 @@ Adds a `/player <name> brain <mode>` sub-command injecting vanilla-mob-style AI 
 ![](https://cdn.modrinth.com/data/cached_images/a53fc27b646fd4d9b41b911e25161a0a7a42d165_0.webp)
 
 Wear any main-hand item on your head with the `/hat` command. When a **Totem of Undying** is placed in the helmet slot, taking fatal damage triggers a survival effect: **Regeneration II + Absorption II + Fire Resistance I**, giving you a second chance.
+
+### Player Head Skin (`playerHeadSkin`)
+
+Real and Carpet fake players wear a player head to use its full skin; swapping heads updates it, and removing it or disabling the rule restores the previous skin. The head stays visible. Server-side, with no skin mod or `playerHat` required.
 
 ### Riding Players (`ridingPlayers`)
 

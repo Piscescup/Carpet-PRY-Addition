@@ -226,6 +226,8 @@ Wears the main-hand item on the head, swapping it with the item currently on the
 - Absorption II
 - Fire Resistance I
 
+**playerHeadSkin** - With both rules enabled, hold a player head and run `/hat` to use its full skin; removing it or disabling the rule restores the original skin. This rule works independently of `playerHat`: equipping a player head normally is enough. Mob heads and heads without a valid skin do not trigger it.
+
 ### Usage Examples
 
 ```bash

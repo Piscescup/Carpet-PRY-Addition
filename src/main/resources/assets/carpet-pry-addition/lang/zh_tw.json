@@ -15,6 +15,8 @@
   "carpet.rule.invisibleInTallGrass.desc": "玩家頭部位於高草叢時自動隱形",
   "carpet.rule.playerHat.name": "玩家帽子",
   "carpet.rule.playerHat.desc": "允許玩家將物品戴在頭上，並新增/hat指令。頭部放置不死圖騰時可觸發死亡保護效果",
+  "carpet.rule.playerHeadSkin.name": "玩家頭部皮膚",
+  "carpet.rule.playerHeadSkin.desc": "真人與假人戴玩家頭顱時採用其全身皮膚，摘下或關閉規則後恢復原皮膚",
   "carpet.rule.ridingPlayers.name": "騎乘玩家",
   "carpet.rule.ridingPlayers.desc": "主手持不死圖騰時，右鍵玩家頭部騎到對方頭上（點軀幹無反應，假人不參與）",
   "carpet.rule.pickupPlayers.name": "撿起玩家",

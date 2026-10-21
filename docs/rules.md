@@ -2,7 +2,7 @@
 
 > Mod ID: `carpet-pry-addition` | 版本: `1.2.0`
 >
-> 共 **34 条**规则（`whoCalledMeSound` / `whoCalledMeHighlight` 作为配套子规则内联在 whoCalledMe 节）
+> 共 **35 条**规则（`whoCalledMeSound` / `whoCalledMeHighlight` 作为配套子规则内联在 whoCalledMe 节）
 >
 > **提示：可以使用 `Ctrl+F` 快速查找自己想要的规则**
 
@@ -37,6 +37,7 @@
   - [whoCalledMe - 谁在叫我](#whocalledme---谁在叫我)
 - [生存功能](#生存功能)
   - [playerHat - 玩家帽子](#playerhat---玩家帽子)
+  - [playerHeadSkin - 玩家头部皮肤](#playerheadskin---玩家头部皮肤)
   - [betterSnowball - 更好的雪球](#bettersnowball---更好的雪球)
   - [invisibleInTallGrass - 隐身草](#invisibleintallgrass---隐身草)
   - [moreEndCrystalTypes - 更多种类的末地水晶](#moreendcrystaltypes---更多种类的末地水晶)
@@ -460,6 +461,25 @@
 | **默认值** | `false` |
 | **参考选项** | `false`, `true` |
 | **分类** | `PRIMARYUAN`, `SURVIVAL`, `COMMAND` |
+
+---
+
+### playerHeadSkin - 玩家头部皮肤
+
+真人与 Carpet 假人在头部槽位戴上玩家头颅后，采用头颅的全身皮肤；直接换头更新皮肤，摘下、换其他装备或关闭规则时恢复佩戴前皮肤（包括假人统一皮肤）。带头上线、重生或开启规则时同样生效。
+
+| 属性 | 值 |
+|------|-----|
+| **规则名** | `playerHeadSkin` |
+| **描述** | 真人与假人戴玩家头颅时采用其全身皮肤，摘下或关闭规则后恢复原皮肤 |
+| **类型** | `boolean` |
+| **默认值** | `false` |
+| **参考选项** | `false`, `true` |
+| **分类** | `PRIMARYUAN`, `SURVIVAL`, `FEATURE` |
+
+- 优先使用头颅自带皮肤；只有名字或 UUID 时通过原版服务异步解析，等待或失败时保留原皮肤。无有效皮肤来源的玩家头颅与生物头不换肤。
+- 仅改变皮肤，名字、UUID、游戏状态不变，头颅仍显示。纯服务端，不需要换肤模组；不依赖 `playerHat`，正常戴上玩家头颅即可。
+- 真人自身刷新可能短暂加载；打开外部容器或鼠标拿着物品时，延后至关闭容器、放回物品后刷新自身，其他玩家即时可见。
 
 ---
 
