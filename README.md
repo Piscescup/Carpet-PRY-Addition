@@ -77,10 +77,10 @@
 ### 假人增强
 
 - `fakePlayerTpp`：假人珍珠传送站，附 `/tpp` / `/tppset` 命令
-- `fakePlayerSkinMode` / `fakePlayerSkinSet`：假人皮肤模式（默认 / 召唤时 / 统一皮肤）与统一皮肤玩家名；所有假人出生即穿目标皮肤无闪变，不影响真人玩家
+- `fakePlayerSkinMode` / `fakePlayerSkinSet`：假人皮肤模式（默认 / 召唤时 / 统一皮肤）与统一皮肤玩家名；皮肤就绪时在出生前应用，解析中可能短暂显示默认皮肤，不影响真人
 - `fakePlayerDropAll`：`/player dropall` 按设定节奏持续丢出假人背包物品
 - `fakePlayerSendto`：`/player sendto` 建立假人间单向背包物品流
-- `fakePlayerBrain`：`/player <name> brain` 为假人注入 19 种原版生物式 AI（僵尸/骷髅/猪灵/狼/末影人…），纯服务端、零额外实体；支持中文名、`keep` 跨重启保持与名牌后缀着色
+- `fakePlayerBrain`：`/player <name> brain` 为假人注入 19 种原版生物式 AI（僵尸/骷髅/猪灵/狼/末影人…），纯服务端、零额外实体；支持中文名、`keep` 在本次服务器运行内重上保持与名牌后缀着色
 
 ### 玩家缩放
 
@@ -96,8 +96,8 @@
 - `ridingPlayersAutoDismount`：游戏模式变更时乘客自动下车
 - `ridingPlayersClientInteract`：头上有乘客时仍可交互方块/实体（需客户端安装）
 - `peacefulPlayers`：`/pvp` 按玩家开关 PVP，`@a` 为全服总开关
-- `patPatPlayers`：右键点击其他玩家的头部像撸猫一样抚摸，对方随节奏往复蹲起、头顶冒爱心；被摸者眼前冒爱心+贴耳轻响（轻响从发起者方向传来）；不要求空手、不改变原版交互（`true` 随手摸 / `sneak` 潜行才摸；纯服务端实现，类似 PatPat）
-- `whoCalledMe`：聊天里出现玩家的名字（子串匹配+最长名优先，紧邻字母数字也算）时，被点名的玩家连响三声提示音（音效可选，`false` 关闭）并弹出 title 显示消息原文；聊天框里出现的玩家名渲染为高亮色（默认水蓝，16 色 + 彩虹渐变可选，`false` 不变色；自己提到自己也提醒，假人不提醒）
+- `patPatPlayers`：右键真人玩家头部产生爱心、轻响与短暂蹲起（`true` 随手摸，`sneak` 潜行摸）；`/patnod off` 可拒绝被摸
+- `whoCalledMe`：聊天点名时用提示音与标题提醒，自己提到自己也生效；`mention` 仅匹配 @名字。`whoCalledMeSound` 与 `whoCalledMeHighlight` 控制音效和颜色
 - `clickThrough`：右键墙告示牌/挂墙木牌/展示框/画等直接打开背后贴挂的容器（潜行保持原版交互）
 
 ### 生存功能
@@ -108,7 +108,7 @@
 - `betterSnowball`：雪球对玩家造成击退与伤害
 - `invisibleInTallGrass`：头部位于高草丛时自动隐身
 - `moreEndCrystalTypes`：允许把末地水晶放在哭泣的黑曜石上（`invulnerable` 放出无敌水晶）
-- `textAnimation`：`/text` 向在线玩家（假人除外；@a 全服或玩家名定向，目标必填）各自眼前逐字弹出对话文本，停留后整句坠落消散（米塔字幕，结尾感叹号越多整句越大，原版客户端即用）
+- `textAnimation`：`/text @a|玩家名 <文本>` 播放米塔字幕，原版客户端可用；前 12 名接收者显示实体字幕，其余使用 actionbar 打字机
 
 
 ## 致谢

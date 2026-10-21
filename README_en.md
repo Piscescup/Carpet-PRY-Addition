@@ -76,10 +76,10 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 ### Fake Player Enhancements
 
 - `fakePlayerTpp`: fake player pearl teleport stations with `/tpp` / `/tppset`
-- `fakePlayerSkinMode` / `fakePlayerSkinSet`: fake player skin mode (default / summon / same skin) and the shared skin player name; every fake wears its target skin from the first frame (no flash), real players never affected
+- `fakePlayerSkinMode` / `fakePlayerSkinSet`: fake player skin mode (default / summon / same skin) and the shared skin player name; applied before spawn when available, with a possible brief default skin during lookup; real players are unaffected
 - `fakePlayerDropAll`: paced `/player dropall` dropping of the fake player's inventory
 - `fakePlayerSendto`: `/player sendto` one-way inventory item flow between fake players
-- `fakePlayerBrain`: `/player <name> brain` injects 19 vanilla-mob-style AI modes into fake players (zombie/skeleton/piglin/wolf/enderman/...), pure server-side with zero extra entities; supports CJK names, `keep` across restarts and colored name suffixes
+- `fakePlayerBrain`: `/player <name> brain` injects 19 vanilla-mob-style AI modes into fake players (zombie/skeleton/piglin/wolf/enderman/...), pure server-side with zero extra entities; supports CJK names, `keep` across rejoins within the current server run and colored name suffixes
 
 ### Player Scaling
 
@@ -95,14 +95,14 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 - `ridingPlayersAutoDismount`: passengers auto-dismount on game mode change
 - `ridingPlayersClientInteract`: keep interacting while carrying a passenger (requires client install)
 - `peacefulPlayers`: per-player `/pvp` toggles, `@a` as a server-wide switch
-- `patPatPlayers`: pat other players' heads cat-petting style — the target bobs down and up with the rhythm with hearts above their head, while the patted player sees a heart before their eyes and hears a soft sound coming from the patter's direction; works with any item in hand and never alters vanilla interactions (`true` = pat freely / `sneak` = only while sneaking; pure server-side, similar to PatPat)
-- `whoCalledMe`: when a chat message contains a player's name (substring with longest-name-wins, glued letters/digits count), the mentioned player gets three notification dings (sound selectable, `false` to mute) and a title showing the message text; player names appearing in chat are highlighted (default aqua, 16 colors + rainbow gradient available, `false` keeps colors untouched; mentioning yourself works too, fake players excluded)
+- `patPatPlayers`: right-click another real player’s head for hearts, sound and a brief crouch (`true` freely, `sneak` while sneaking); opt out with `/patnod off`
+- `whoCalledMe`: notify named players by sound and title, including self-mentions; `mention` limits matching to @names. `whoCalledMeSound` and `whoCalledMeHighlight` control sound and color
 - `clickThrough`: right-click wall signs/item frames/paintings to open containers mounted directly behind them (sneak keeps vanilla interaction)
 
 ### Survival Features
 
 - `sleepingDuringTheDay`: sleep during daytime, wake to night
-- `textAnimation`: `/text` pops up MiSide-style animated subtitles in front of online players (fake players excluded; `@a` for everyone or a player name to direct — a target is required) — characters pop in one by one, hold, then the sentence drops and fades; more trailing exclamation marks make the whole sentence bigger (works on vanilla clients)
+- `textAnimation`: `/text @a|player <message>` plays MiSide-style subtitles on vanilla clients; the first 12 recipients get entity subtitles and the rest get an actionbar typewriter
 - `playerHat`: `/hat` to wear items on head, Totem of Undying in head slot triggers death protection
 - `playerHeadSkin`: real and fake players wear a player head to use its full skin; removing it restores the original skin, server-side
 - `betterSnowball`: snowballs deal knockback and damage to players
