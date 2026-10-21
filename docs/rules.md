@@ -1,6 +1,6 @@
 # Carpet Pry Addition 规则文档
 
-> Mod ID: `carpet-pry-addition` | 版本: `1.3.0`
+> Mod ID: `carpet-pry-addition` | 版本: `1.3.1`
 >
 > 共 **35 条**规则（`whoCalledMeSound` / `whoCalledMeHighlight` 作为配套子规则内联在 whoCalledMe 节）
 >

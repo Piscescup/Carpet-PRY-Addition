@@ -1,6 +1,6 @@
 # Carpet Pry Addition Rules Documentation
 
-> Mod ID: `carpet-pry-addition` | Version: `1.3.0`
+> Mod ID: `carpet-pry-addition` | Version: `1.3.1`
 >
 > Total: **35 rules** (`whoCalledMeSound` / `whoCalledMeHighlight` are documented inline as companion rules in the whoCalledMe section)
 >
