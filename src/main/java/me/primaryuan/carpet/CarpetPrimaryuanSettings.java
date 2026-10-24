@@ -240,4 +240,11 @@ public class CarpetPrimaryuanSettings {
     )
     public static boolean clickThrough = false;
 
+    /**
+     * RedPacket like QQ.
+     */
+    @Rule(
+        categories = {PRIMARYUAN, FEATURE, COMMAND}
+    )
+    public static boolean redPacket = true;
 }

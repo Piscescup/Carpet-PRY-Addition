@@ -8,13 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.primaryuan.carpet.brain.BrainManager;
-import me.primaryuan.carpet.command.HatCommand;
-import me.primaryuan.carpet.command.PvpCommand;
-import me.primaryuan.carpet.command.PatNodCommand;
-import me.primaryuan.carpet.command.RidingCommand;
-import me.primaryuan.carpet.command.ScaleCommand;
-import me.primaryuan.carpet.command.TextCommand;
-import me.primaryuan.carpet.command.TppCommand;
+import me.primaryuan.carpet.command.*;
 import me.primaryuan.carpet.handler.clickThrough.ClickThroughHandler;
 import me.primaryuan.carpet.handler.entitiesRidingPlayers.EntitiesRidingPlayersHandler;
 import me.primaryuan.carpet.handler.patPatPlayers.PatPatPlayersHandler;
@@ -91,6 +85,8 @@ public class CarpetPrimaryuanServer implements CarpetExtension {
         PvpCommand.register();
         PatNodCommand.register();
         TextCommand.register();
+
+        RedPacketCommands.register();
 
         // 和平的玩家（pvp）：加载持久化状态、注册 PVP 伤害拦截与玩家加入登记
         PvpManager.init();
