@@ -13,6 +13,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ResolvableProfile;
 
+//#if MC >= 260200
+//$$ import net.minecraft.world.item.DyeColor;
+//#endif
+
 import java.util.Objects;
 import java.util.UUID;
 

@@ -10,7 +10,6 @@ import me.primaryuan.carpet.feature.redpacket.RedPacketManager;
 import me.primaryuan.carpet.i18n.ServerI18n;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,7 +18,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.component.ResolvableProfile;
+
+//#if MC >= 260200
+//$$ import net.minecraft.world.item.DyeColor;
+//#endif
 
 import java.util.Comparator;
 import java.util.List;
