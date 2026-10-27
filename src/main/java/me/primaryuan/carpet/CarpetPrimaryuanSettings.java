@@ -241,10 +241,20 @@ public class CarpetPrimaryuanSettings {
     public static boolean clickThrough = false;
 
     /**
-     * RedPacket like QQ.
+     * <p>
+     *     QQ-style item red packet.
+     * </p>
+     *
+     * <p>
+     *     Normal red packet, Lucky red packet, Exclusive red packet, Password red packet.
+     * </p>
+     *
+     * <p>
+     *     Disable default.
+     * </p>
      */
     @Rule(
         categories = {PRIMARYUAN, FEATURE, COMMAND}
     )
-    public static boolean redPacket = true;
+    public static boolean redPacket = false;
 }
