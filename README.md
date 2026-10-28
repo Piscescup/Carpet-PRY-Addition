@@ -102,6 +102,7 @@
 
 ### 生存功能
 
+- `redPacket`：红包抽取动画、待领取箱和所有人的领取结果；
 - `sleepingDuringTheDay`：白天睡觉，睡醒切换至夜晚
 - `playerHat`：`/hat` 将物品戴在头上，头部不死图腾可触发死亡保护
 - `playerHeadSkin`：真人与假人戴玩家头颅切换全身皮肤，摘下恢复原皮肤，纯服务端

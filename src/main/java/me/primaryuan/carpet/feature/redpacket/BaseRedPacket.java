@@ -2,6 +2,7 @@ package me.primaryuan.carpet.feature.redpacket;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import me.primaryuan.carpet.util.TimeUnit;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -51,6 +52,13 @@ public abstract class BaseRedPacket implements RedPacket {
     @SerializedName("expires")
     long expiresAtMillis;
     @Expose
+    private long durationAmount = TimeUnit.DEFAULT_AMOUNT;
+    @Expose
+    private TimeUnit durationUnit = TimeUnit.DEFAULT;
+    @Expose
+    @SerializedName("lifetimeMillis")
+    private Long legacyLifetimeMillis;
+    @Expose
     @SerializedName("items")
     protected List<ItemStack> shareItems;
     @Expose
@@ -58,7 +66,11 @@ public abstract class BaseRedPacket implements RedPacket {
     @Expose
     Map<UUID, String> claimantNames;
     @Expose
+    Map<Integer, List<ItemStack>> claimItems = new LinkedHashMap<>();
+    @Expose
     boolean refunded;
+    @Expose
+    boolean completionAnnounced;
 
     protected BaseRedPacket(RedPacketType type) {
         this.type = type;
@@ -90,7 +102,12 @@ public abstract class BaseRedPacket implements RedPacket {
     }
 
     void restore(MinecraftServer server) {
+        // Older saves recorded the claimant but not the awarded items.
+        if (claimItems == null) claimItems = new LinkedHashMap<>();
+        restoreLegacyDuration();
         validate();
+        // Completed legacy packets have already finished; do not announce them again after a restart.
+        if (claimants.size() == redPacketAmount) completionAnnounced = true;
         receiverAmount = redPacketAmount;
         shareItems = shareItems.stream().map(ItemStack::copy).toList();
         bind(server);
@@ -101,9 +118,11 @@ public abstract class BaseRedPacket implements RedPacket {
     }
 
     private void validateCommon() {
+        if (durationUnit == null) throw new IllegalArgumentException("Missing red packet duration unit");
+        durationUnit.toMillis(durationAmount);
         if (id == null || id.isBlank() || senderId == null || type == null || senderName == null || senderName.isBlank()
             || !RedPacket.validText(congratulations) || redPacketAmount < 1 || redPacketAmount > MAX_RED_PACKET_AMOUNTS
-            || expiresAtMillis <= 0 || shareItems == null || claimants == null || claimantNames == null
+            || expiresAtMillis <= 0 || shareItems == null || claimants == null || claimantNames == null || claimItems == null
             || shareItems.stream().anyMatch(stack -> stack == null || stack.isEmpty()
                 || stack.getCount() > stack.getMaxStackSize())) {
             throw new IllegalArgumentException("Invalid red packet configuration");
@@ -119,8 +138,16 @@ public abstract class BaseRedPacket implements RedPacket {
         int remainingShares = redPacketAmount - players.size();
         if (!claimantNames.keySet().equals(players)
             || claimantNames.values().stream().anyMatch(name -> name == null || name.isBlank())
-            || items < remainingShares || (remainingShares == 0 && items != 0)) {
+            || (completionAnnounced && remainingShares != 0)
+            || (refunded ? items != 0 : items < remainingShares || (remainingShares == 0 && items != 0))) {
             throw new IllegalArgumentException("Invalid remaining red packet items or claims");
+        }
+        for (var entry : claimItems.entrySet()) {
+            if (!claimants.containsKey(entry.getKey()) || entry.getValue() == null || entry.getValue().isEmpty()
+                || entry.getValue().stream().anyMatch(stack -> stack == null || stack.isEmpty()
+                    || stack.getCount() > stack.getMaxStackSize())) {
+                throw new IllegalArgumentException("Invalid red packet claim history");
+            }
         }
     }
 
@@ -155,9 +182,48 @@ public abstract class BaseRedPacket implements RedPacket {
     }
 
     @Override
+    public long durationAmount() {
+        return durationAmount;
+    }
+
+    @Override
+    public TimeUnit durationUnit() {
+        return durationUnit;
+    }
+
+    /** Configures the amount and unit together before this packet is published. */
+    public void setDuration(long amount, TimeUnit unit) {
+        if (unit == null) throw new IllegalArgumentException("Missing red packet duration unit");
+        unit.toMillis(amount);
+        if (server != null) throw new IllegalStateException("Cannot change a published red packet's lifetime");
+        this.durationAmount = amount;
+        this.durationUnit = unit;
+        this.legacyLifetimeMillis = null;
+    }
+
+    private void restoreLegacyDuration() {
+        if (legacyLifetimeMillis == null) return;
+        long millis = legacyLifetimeMillis;
+        if (millis <= 0 || millis > TimeUnit.MAX_MILLIS) {
+            throw new IllegalArgumentException("Invalid legacy red packet duration");
+        }
+        for (TimeUnit unit : TimeUnit.values()) {
+            long unitMillis = unit.toMillis(1);
+            if (millis % unitMillis != 0) continue;
+            durationAmount = millis / unitMillis;
+            durationUnit = unit;
+            legacyLifetimeMillis = null;
+            return;
+        }
+        throw new IllegalArgumentException("Legacy red packet duration is not a whole time unit");
+    }
+
+    @Override
     public long expireTimeAtTick() {
-        return server == null ? expireTimeAtTick : server.getTickCount()
-            + Math.max(0, (expiresAtMillis - System.currentTimeMillis() + 49) / 50);
+        if (server == null) return expireTimeAtTick;
+        long tickMillis = TimeUnit.TICKS.toMillis(1);
+        long remaining = Math.max(0, expiresAtMillis - System.currentTimeMillis());
+        return server.getTickCount() + remaining / tickMillis + (remaining % tickMillis == 0 ? 0 : 1);
     }
 
     @Override
@@ -183,6 +249,17 @@ public abstract class BaseRedPacket implements RedPacket {
     @Override
     public UUID claimedBy(int shareIndex) {
         return claimants.get(shareIndex);
+    }
+
+    @Override
+    public String claimantName(int shareIndex) {
+        UUID player = claimedBy(shareIndex);
+        return player == null ? null : claimantNames.getOrDefault(player, player.toString());
+    }
+
+    @Override
+    public List<ItemStack> claimedItems(int shareIndex) {
+        return claimItems.getOrDefault(shareIndex, List.of()).stream().map(ItemStack::copy).toList();
     }
 
     @Override
@@ -214,6 +291,7 @@ public abstract class BaseRedPacket implements RedPacket {
         shareItems = List.copyOf(remaining);
         claimants.put(index, player);
         claimantNames.put(player, name);
+        claimItems.put(index, result.stream().map(ItemStack::copy).toList());
         return result;
     }
 

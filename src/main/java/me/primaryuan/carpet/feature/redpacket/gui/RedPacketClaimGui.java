@@ -18,6 +18,7 @@ import net.minecraft.world.item.component.ResolvableProfile;
 //#endif
 
 import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -84,16 +85,17 @@ public final class RedPacketClaimGui {
         renderedClaimedCount = claimedCount;
         renderedExpired = expired;
         renderedPage = page;
+        for (int slot = PAGE_SIZE; slot < 54; slot++) gui.icon(slot, GuiItems.filler());
         for (int slot = 0; slot < PAGE_SIZE; slot++) {
             int shareIndex = page * PAGE_SIZE + slot;
             if (shareIndex >= total) {
-                gui.icon(slot, ItemStack.EMPTY);
+                gui.icon(slot, GuiItems.filler());
                 continue;
             }
             UUID claimantId = packet.claimedBy(shareIndex);
             boolean available = claimantId == null;
 
-            Component status = !available ? tr("taken_by", claimantId)
+            Component status = !available ? tr("taken_by", packet.claimantName(shareIndex))
                 : tr(expired ? "expired" : "click");
 
             ItemStack icon = GuiItems.icon(
@@ -132,7 +134,6 @@ public final class RedPacketClaimGui {
                 gui.icon(slot, icon);
             }
         }
-        gui.icon(45, ItemStack.EMPTY);
         if (page > 0) gui.button(45, icon(Items.ARROW, "previous"), click -> {
             page--;
             render(true);
@@ -142,7 +143,8 @@ public final class RedPacketClaimGui {
             Component.literal(packet.congratulations()), tr("remaining", total - claimedCount, total),
             tr("page", page + 1, pages), tr("one_per_player")));
         gui.button(51, icon(Items.CLOCK, "refresh"), click -> render(true));
-        gui.icon(53, ItemStack.EMPTY);
+        gui.button(52, icon(Items.BOOK, "results"), click ->
+            new RedPacketResultsGui(session.player(), packet).open());
         if (page + 1 < pages) gui.button(53, icon(Items.ARROW, "next"), click -> {
             page++;
             render(true);
@@ -153,6 +155,7 @@ public final class RedPacketClaimGui {
         if (claiming || session.isFinished()) return;
         // 不信任屏幕上的旧状态；另一位玩家可能刚刚领走同一份。
         ClaimResult result;
+        List<ItemStack> preview = packet.shareItems();
         if (packet.expired()) result = ClaimResult.EXPIRED;
         else if (index < 0 || index >= packet.redPacketAmount() || packet.claimedBy(index) != null) {
             result = ClaimResult.TAKEN;
@@ -174,7 +177,12 @@ public final class RedPacketClaimGui {
         };
         session.player().sendSystemMessage(tr(key).copy().withStyle(
             result == ClaimResult.CLAIMED ? ChatFormatting.GREEN : ChatFormatting.RED));
-        render(true);
+        if (result == ClaimResult.CLAIMED) {
+            // 奖励已经保存；动画仅展示图标，关闭或断线不会影响待领取物品。
+            new RedPacketSpinGui(session.player(), packet, index, preview).open();
+        } else {
+            render(true);
+        }
     }
 
     private static Item redShulkerBox() {

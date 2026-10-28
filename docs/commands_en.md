@@ -22,6 +22,7 @@
 - [/pvp - Peaceful Players](#pvp---peaceful-players)
 - [/patnod - Pat Interaction Toggle](#patnod---pat-interaction-toggle)
 - [/text - MiSide Subtitles](#text---miside-subtitles)
+- [/redpacket - Red Packets](#redpacket---red-packets)
 
 ---
 
@@ -715,3 +716,17 @@ Use `||` for a literal `|`; legacy color codes use `&` (e.g. `&c`), `&&` for a l
 /text @a Glowing|glow=true;sound=false    # glow, no sound
 /text brokeyuan private ping              # direct at a single player
 ```
+
+---
+
+## /redpacket - Red Packets
+
+> **Rule**: `redPacket`; enable with `/carpet redPacket true`.
+
+- `/redpacket create <lucky|normal|password|exclusive> [greeting]`: open the creation menu, add items and configure shares, a password or an exclusive recipient.
+- `/redpacket claim <id>`: open a packet, also available through the red **[Open]** chat action. Selecting a share plays an item-and-count reel that slows to reveal the saved reward.
+- `/redpacket inbox`: open pending rewards and refunds. Click a reward icon to collect whatever fits in your inventory; the remainder stays stored.
+- `/redpacket results <id>`: browse every claimant’s name, items and amounts. Results remain available after expiry; the original chat action also opens expired results.
+- `/redpacket mute|unmute`: disable or enable your packet broadcasts and sender claim receipts.
+
+Each player can claim one share per packet. Rewards are saved before the animation starts. Animation, inbox and result slots are read-only icons. Closing a menu, disconnecting, rejoining or normally restarting the server neither collects nor rerolls rewards. Collection is manual and never drops overflow. Packets expire after three minutes; unclaimed items move to the sender’s inbox. Older claims without stored item details are labeled as unknown.

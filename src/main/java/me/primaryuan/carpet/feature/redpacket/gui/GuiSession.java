@@ -36,6 +36,14 @@ public final class GuiSession implements AutoCloseable {
         return finished;
     }
 
+    /**
+     * Close a container session before switching to a screen without an inventory menu.
+     */
+    static void cancelActive(ServerPlayer player) {
+        GuiSession active = ACTIVE.get(player);
+        if (active != null) active.cancel();
+    }
+
     public List<ItemStack> contents() {
         return inventory.snapshot();
     }
@@ -48,7 +56,6 @@ public final class GuiSession implements AutoCloseable {
         return !finished && current == page;
     }
 
-    /** 先更换当前页，再打开新菜单，旧菜单的关闭回调因此不会取消整个会话。 */
     boolean open(GuiPage page, BooleanSupplier openPage) {
         ensureActive();
         if (page == current && page.isOpen()) {
@@ -88,10 +95,6 @@ public final class GuiSession implements AutoCloseable {
         }
     }
 
-    /**
-     * 结束会话并取走物品。调用者从此负责保管/发放返回的真实物品。
-     * 只能调用一次；应先用 contents() 完成业务校验，再调用此方法。
-     */
     public List<ItemStack> takeItems() {
         ensureActive();
         finished = true;
@@ -105,13 +108,11 @@ public final class GuiSession implements AutoCloseable {
         return inventory.drain();
     }
 
-    /** 清空投放区并退还物品，保持会话和当前页面打开。 */
     public void clearItems() {
         ensureActive();
         returnItems(inventory.drain());
     }
 
-    /** 取消可重复调用；先封闭会话，再关闭页面和退还，避免关闭回调二次结算。 */
     public void cancel() {
         if (finished) {
             return;
@@ -140,7 +141,6 @@ public final class GuiSession implements AutoCloseable {
 
     private void returnItems(List<ItemStack> items) {
         for (ItemStack stack : items) {
-            // 原版负责堆叠、背包同步及满背包时掉落；不额外执行第二次掉落。
             //#if MC >= 260300
             //$$ player.getInventory().placeItemBackInInventory(stack, net.minecraft.util.Prediction.PREDICTED);
             //#else
@@ -177,8 +177,8 @@ public final class GuiSession implements AutoCloseable {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (GuiSession session : new ArrayList<>(ACTIVE.values())) {
                 if (session.player.level().getServer() == server
-                        && (!session.player.isAlive() || session.player.hasDisconnected()
-                        || session.current == null || !session.current.isOpen())) {
+                    && (!session.player.isAlive() || session.player.hasDisconnected()
+                    || session.current == null || !session.current.isOpen())) {
                     session.cancel();
                 }
             }

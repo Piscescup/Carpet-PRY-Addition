@@ -101,6 +101,7 @@ All rules are off by default except the client-side rule `ridingPlayersClientInt
 
 ### Survival Features
 
+- `redPacket`: animated packet draws, a pending-reward inbox and everyone’s results; 
 - `sleepingDuringTheDay`: sleep during daytime, wake to night
 - `textAnimation`: `/text @a|player <message>` plays MiSide-style subtitles on vanilla clients; the first 12 recipients get entity subtitles and the rest get an actionbar typewriter
 - `playerHat`: `/hat` to wear items on head, Totem of Undying in head slot triggers death protection

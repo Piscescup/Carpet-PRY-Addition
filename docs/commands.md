@@ -22,6 +22,7 @@
 - [/pvp - 和平的玩家](#pvp---和平的玩家)
 - [/patnod - 被摸互动开关](#patnod---被摸互动开关)
 - [/text - 米塔字幕](#text---米塔字幕)
+- [/redpacket - 红包](#redpacket---红包)
 
 ---
 
@@ -715,3 +716,17 @@ scale
 /text @a 发光字幕|glow=true;sound=false      # 发光、无声
 /text brokeyuan 私发提醒                     # 定向单个玩家
 ```
+
+---
+
+## /redpacket - 红包
+
+> **所属规则**：`redPacket`，通过 `/carpet redPacket true` 启用。
+
+- `/redpacket create <lucky|normal|password|exclusive> [祝福语]`：打开创建界面，放入物品并设置份数、口令或专属领取人。
+- `/redpacket claim <id>`：打开红包，可直接点击公屏红色的 **[Open]**。选择一份后播放物品与数量滚动、减速停止的动画。
+- `/redpacket inbox`：打开待领取箱，点击奖励图标，将背包装得下的物品放入背包，其余继续保留。
+- `/redpacket results <id>`：查看所有领取人的名字、物品和数量，支持分页，红包过期后仍可查看；过期后点击原广播也会打开结果页。
+- `/redpacket mute|unmute`：关闭或恢复自己的红包广播和发出红包的领取回执。
+
+每人每个红包只能抽取一份，抽取结果先保存，再播放动画。动画、待领取箱和结果页展示的是不可取走的图标；关界面、掉线、重新登录或正常重启不会自动领取或重新抽取。奖励必须主动接收，背包满时不会向地面掉落。红包 3 分钟后过期，未抽取的物品存入发送者的待领取箱。旧存档没有保存的奖励明细会标为未知。

@@ -2,6 +2,8 @@ package me.primaryuan.carpet.feature.redpacket.gui;
 
 import carpet.patches.EntityPlayerMPFake;
 import me.primaryuan.carpet.feature.redpacket.RedPacket;
+import me.primaryuan.carpet.feature.redpacket.BaseRedPacket;
+import me.primaryuan.carpet.util.TimeUnit;
 import me.primaryuan.carpet.feature.redpacket.LuckyRedPacket;
 import me.primaryuan.carpet.feature.redpacket.NormalRedPacket;
 import me.primaryuan.carpet.feature.redpacket.PasswordRedPaket;
@@ -43,6 +45,8 @@ public final class RedPacketCreateGui {
     private final ChestGui mainGui;
     private final BiConsumer<RedPacket, GuiSession> onConfirm;
     private final Supplier<List<ServerPlayer>> onlinePlayers;
+    private final long durationAmount;
+    private final TimeUnit durationUnit;
     private String congratulations;
     private int shares = 1;
     private String password = "";
@@ -50,33 +54,54 @@ public final class RedPacketCreateGui {
     private String targetName = "";
 
     public RedPacketCreateGui(ServerPlayer player, RedPacket.RedPacketType type, String congratulations) {
-        this(player, type, congratulations, RedPacketManager::publish);
+        this(player, type, congratulations, TimeUnit.DEFAULT_AMOUNT, TimeUnit.DEFAULT, RedPacketManager::publish);
+    }
+
+    public RedPacketCreateGui(ServerPlayer player, RedPacket.RedPacketType type, String congratulations,
+                              long durationAmount, TimeUnit durationUnit) {
+        this(player, type, congratulations, durationAmount, durationUnit, RedPacketManager::publish);
     }
 
     public RedPacketCreateGui(ServerPlayer player, RedPacket.RedPacketType type, String congratulations,
                               BiConsumer<RedPacket, GuiSession> onConfirm) {
-        this(player, type, congratulations, onConfirm,
+        this(player, type, congratulations, TimeUnit.DEFAULT_AMOUNT, TimeUnit.DEFAULT, onConfirm);
+    }
+
+    public RedPacketCreateGui(ServerPlayer player, RedPacket.RedPacketType type, String congratulations,
+                              long durationAmount, TimeUnit durationUnit,
+                              BiConsumer<RedPacket, GuiSession> onConfirm) {
+        this(player, type, congratulations, durationAmount, durationUnit, onConfirm,
                 () -> player.level().getServer().getPlayerList().getPlayers());
     }
 
     RedPacketCreateGui(ServerPlayer player, RedPacket.RedPacketType type, String congratulations,
                        BiConsumer<RedPacket, GuiSession> onConfirm,
                        Supplier<List<ServerPlayer>> onlinePlayers) {
+        this(player, type, congratulations, TimeUnit.DEFAULT_AMOUNT, TimeUnit.DEFAULT, onConfirm, onlinePlayers);
+    }
+
+    private RedPacketCreateGui(ServerPlayer player, RedPacket.RedPacketType type, String congratulations,
+                              long durationAmount, TimeUnit durationUnit,
+                              BiConsumer<RedPacket, GuiSession> onConfirm,
+                              Supplier<List<ServerPlayer>> onlinePlayers) {
         if (!RedPacket.validText(congratulations)) {
             throw new IllegalArgumentException("Invalid congratulations");
         }
+        Objects.requireNonNull(durationUnit, "durationUnit").toMillis(durationAmount);
         this.type = Objects.requireNonNull(type, "type");
+        this.durationAmount = durationAmount;
+        this.durationUnit = durationUnit;
         this.congratulations = congratulations;
         this.onConfirm = Objects.requireNonNull(onConfirm, "onConfirm");
         this.onlinePlayers = Objects.requireNonNull(onlinePlayers, "onlinePlayers");
         this.session = new GuiSession(player, INPUT_SLOTS);
         this.mainGui = new ChestGui(session, 6, tr("title", typeName(type).getString()));
         for (int i = 0; i < INPUT_SLOTS; i++) mainGui.input(i, i);
+        for (int i = INPUT_SLOTS; i < 54; i++) mainGui.icon(i, GuiItems.filler());
         mainGui.button(45, icon(Items.BARRIER, "cancel"), click -> session.cancel());
         mainGui.button(53, icon(Items.HOPPER, "clear"), click -> session.clearItems());
-        mainGui.icon(51, GuiItems.icon(Items.CHEST, typeName(type), tr("type_help")));
         mainGui.button(52, GuiItems.icon(Items.EMERALD, tr("confirm"),
-                tr("confirm_help")), click -> confirm());
+                tr("confirm_help"), tr("expiry", durationUnit.format(durationAmount))), click -> confirm());
         renderSettings();
     }
 
@@ -86,8 +111,8 @@ public final class RedPacketCreateGui {
 
     private void renderSettings() {
         boolean exclusive = type == RedPacket.RedPacketType.EXCLUSIVE;
-        mainGui.icon(46, ItemStack.EMPTY);
-        mainGui.icon(48, ItemStack.EMPTY);
+        mainGui.icon(46, GuiItems.filler());
+        mainGui.icon(48, GuiItems.filler());
         if (exclusive) {
             mainGui.icon(47, GuiItems.icon(redShulkerBox(), tr("shares", shares), tr("exclusive_count")));
         } else {
@@ -164,6 +189,7 @@ public final class RedPacketCreateGui {
         int pages = Math.max(1, (players.size() + INPUT_SLOTS - 1) / INPUT_SLOTS);
         int page = Math.max(0, Math.min(requestedPage, pages - 1));
         ChestGui selector = new ChestGui(session, 6, tr("targets_title", page + 1, pages));
+        for (int slot = 0; slot < 54; slot++) selector.icon(slot, GuiItems.filler());
         if (players.isEmpty()) selector.icon(22, icon(Items.BARRIER, "no_targets"));
         for (int i = page * INPUT_SLOTS; i < Math.min(players.size(), (page + 1) * INPUT_SLOTS); i++) {
             ServerPlayer chosen = players.get(i);
@@ -205,7 +231,7 @@ public final class RedPacketCreateGui {
             error(target == null ? "need_target" : "target_offline");
             return;
         }
-        RedPacket packet;
+        BaseRedPacket packet;
         try {
             packet = switch (type) {
                 case LUCKY -> new LuckyRedPacket(session.player(), items, shares, congratulations);
@@ -213,6 +239,7 @@ public final class RedPacketCreateGui {
                 case PASSWORD -> new PasswordRedPaket(session.player(), items, shares, congratulations, password);
                 case EXCLUSIVE -> new ExclusiveRedPacket(session.player(), items, target, congratulations);
             };
+            packet.setDuration(durationAmount, durationUnit);
         } catch (IllegalArgumentException invalid) {
             session.player().sendSystemMessage(ServerI18n.tr("carpetprimaryuan.redpacket.runtime.invalid_items")
                     .copy().withStyle(ChatFormatting.RED));

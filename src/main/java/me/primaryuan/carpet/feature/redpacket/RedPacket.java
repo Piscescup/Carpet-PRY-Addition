@@ -1,6 +1,7 @@
 package me.primaryuan.carpet.feature.redpacket;
 
 
+import me.primaryuan.carpet.util.TimeUnit;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
@@ -127,6 +128,21 @@ public interface RedPacket {
      */
     int receiverAmount();
 
+    /** Returns the configured duration amount, measured in {@link #durationUnit()}. */
+    default long durationAmount() {
+        return TimeUnit.DEFAULT_AMOUNT;
+    }
+
+    /** Returns the configured duration unit. */
+    default TimeUnit durationUnit() {
+        return TimeUnit.DEFAULT;
+    }
+
+    /** Returns the configured lifetime in milliseconds, measured from publication. */
+    default long lifetimeMillis() {
+        return durationUnit().toMillis(durationAmount());
+    }
+
     /**
      * Returns the server game tick at which this red packet expires.
      *
@@ -170,6 +186,16 @@ public interface RedPacket {
      * @return the claimant UUID, or {@code null} if the share is unclaimed
      */
     UUID claimedBy(int shareIndex);
+
+    /**
+     * Returns the saved name of a share's claimant, or {@code null} if unclaimed.
+     */
+    String claimantName(int shareIndex);
+
+    /**
+     * Returns copies of the awarded items; older records may have no item history.
+     */
+    List<ItemStack> claimedItems(int shareIndex);
 
     /**
      * Determines whether this red packet has expired or was refunded.
